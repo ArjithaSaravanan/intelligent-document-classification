@@ -84,7 +84,30 @@ This project helped me understand:
 - refine class definitions
 - add proper evaluation metrics (accuracy, confusion matrix)
 - integrate this with my invoice extraction pipeline
-
+# Prerequisites
+Before running project, make sure the following are installed:
+# 1. Python
+- Python 3.9+ recomended
+# 2. Poppler (Required for PDF processing)
+This project used `pdf2image` to convert PDFs into images.
+For this to work, **Poppler must be installed on your system**
+# Windows
+1. Download Poppler from:
+   [Poppler-Windows](https://github.com/oschwartz10612/poppler-windows/releases/)
+2. Extract the folder
+3. Add the `bin` folder to your system PATH
+   Example:
+   ```
+   C:\poppler\Library\bin
+   ```
+# macOS
+```bash
+brew install poppler
+```
+# Linus (Ubuntu)
+```
+sudo apt-get install poppler-utils
+```
 # How to run
 ```bash
 pip install -r requirements.txt
