@@ -7,7 +7,7 @@ from src.models.classifier import get_model
 from src.data.dataset import get_dataloader
 
 def train():
-    dataloader = get_dataloader("data/processed/images", batch_size=4, shuffle=True)
+    train_dataloader, val_dataloader = get_dataloader("data/processed/images", batch_size=4)
     model = get_model(num_classes=4)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
@@ -15,8 +15,9 @@ def train():
     num_epochs = 10
 
     for epoch in range(num_epochs):
-        total_loss = 0
-        for images, labels in dataloader:
+        model.train()
+        train_loss = 0
+        for images, labels in train_dataloader:
             #Forward pass
             outputs = model(images)
             loss = criterion(outputs, labels)
@@ -24,10 +25,22 @@ def train():
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-            total_loss += loss.item()
+            train_loss += loss.item()
         
-        avg_loss = total_loss / len(dataloader)
-        print(f"Epoch [{epoch+1}/{num_epochs}] - Loss: {avg_loss:.4f}")
+        avg_train_loss = train_loss / len(train_dataloader)
+        
+        model.eval()
+        val_loss = 0
+        with torch.no_grad():
+            for images, labels in val_dataloader:
+                outputs = model(images)
+                loss = criterion(outputs, labels)
+                val_loss += loss.item()
+        
+        avg_val_loss = val_loss / len(val_dataloader)
+        print(f"Epoch [{epoch+1}/{num_epochs}]"
+               f" Train Loss: {avg_train_loss:.4f}"
+               f" Val Loss: {avg_val_loss:.4f}")
     
     os.makedirs("outputs/models", exist_ok=True)
     torch.save(model.state_dict(), "outputs/models/doc_classifier.pth")

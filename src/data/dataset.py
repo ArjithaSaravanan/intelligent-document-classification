@@ -1,5 +1,5 @@
 from torchvision import datasets, transforms
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, random_split
 
 def get_dataset(data_dir: str):
     """
@@ -7,6 +7,9 @@ def get_dataset(data_dir: str):
     """
     transform = transforms.Compose([
         transforms.Resize((224,224)),# Resize images to 224x224
+        transforms.RandomRotation(5), # Randomly rotate images by up to 5 degrees
+        transforms.ColorJitter(brightness=0.2, contrast=0.2), # Randomly adjust brightness and contrast
+        transforms.RandomHorizontalFlip(p=0.1), # Randomly flip images horizontally with a probability of 0.1
         transforms.ToTensor(),
     ])
 
@@ -17,14 +20,27 @@ def get_dataset(data_dir: str):
 
     return dataset
 
-def get_dataloader(data_dir: str, batch_size: int = 4, shuffle: bool = True):
+def get_dataloader(data_dir: str, batch_size: int = 4):
     """
-    Loads dataset and wraps it in a DataLoader
+    Returns train and validation dataloaders
     """
     dataset = get_dataset(data_dir)
-    dataloader = DataLoader(
-        dataset,
+
+    train_size = int(0.8 * len(dataset))
+    val_size = len(dataset) - train_size
+    # Split the dataset into training and validation sets
+    train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
+
+    train_dataloader = DataLoader(
+        train_dataset,
         batch_size=batch_size,
-        shuffle=shuffle
+        shuffle=True
     )
-    return dataloader
+
+    val_dataloader = DataLoader(
+        val_dataset,
+        batch_size=batch_size,
+        shuffle=False
+    )
+
+    return train_dataloader, val_dataloader
