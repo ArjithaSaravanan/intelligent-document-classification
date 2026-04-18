@@ -80,10 +80,11 @@ This project helped me understand:
 - how to expose ML models via APIs
 
 ## What I would improve next
-- collect more training data
-- refine class definitions
-- add proper evaluation metrics (accuracy, confusion matrix)
+- collect more training data to improve generalization
+- refine class definitions to reduce overlap between similar document types
+- add proper evaluation metrics (accuracy, confusion matrix) for better model validation
 - integrate this with my invoice extraction pipeline
+- explore transformer-based document understanding models (e.g, LayoutLM) to incorporate text and layout information for improved classification
   
 ## Prerequisites
 Before running project, make sure the following are installed:
